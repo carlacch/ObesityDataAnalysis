@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>NObesity Prediction</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+        <style>
+
+        
+
+        h3, .h3 {
+            font-size: x-large;
+            font-family: Georgia, serif;
+            color: rgb(48, 135, 138);
+            font-weight: bold;
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 0px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        span {
+            margin-bottom: 10px;
+        }
+
+        table {
+            margin-left:auto;
+            margin-right:auto 
+        }
+
+        .container {
+            margin: auto;
+        }
+
+        .slidecontainer {
+            width: 90%;
+            margin-bottom: 0px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 5px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 1;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgb(48, 135, 138);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        select {
+            width: 250px;
+            font-family: Georgia, serif;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <table style="background-color: rgb(85, 84, 84);" >
+                <tr> <!--first row of table-->
+                    <td width="600px"> 
+                        <h1 style="text-align: center;"><font color="white" style="font-family: Georgia, serif; letter-spacing: 0.01em; font-size: 50px;">NObesity Prediction</font></h1>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table cellpadding='10' align="center">
+            <tr>
+                <td colspan="3" ><H3 >Real-time Obesity Index predictions!</H3></td>
+            </tr>
+
+            <tr>
+                <td width="300px">
+                    <div class="dropdownlist">
+                        <label for="gender">Gender: <span><select id="gender"></select></span></label>                        
+                    </div>
+                    
+                    <div class="slidecontainer">
+                        <label> Age: <span id="age"></span></label>
+                        <input type="range" min="17" max="110" value="25" class="slider" id="age_range" step="1">
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="fam_hist">Family history with overweight: <span><select id="fam_hist"></select></span></label>                        
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="favc">Frequent consumption of high caloric food: <span><select id="favc"></select></span></label>
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="fcvc">Frequency of consumption of vegetable: <span><select id="fcvc"></select></span></label>
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="ncp">Number of main meals: <span><select id="ncp"></select></span></label>                        
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="caec">Consumption of food between meals: <span><select id="caec"></select></span></label>                        
+                    </div>
+                </td>
+
+                <td width="300px"> 
+                    <div>
+                        <button name="predict" type="button" onclick="fetchdata()"> Predict </button>
+                    </div>
+                    <div>
+                        <label>NObesity: <span id="estimated_NObesity"></span></label>
+                    </div>
+                </td>
+
+                <td width="300px">
+
+                    <div class="dropdownlist">
+                        <label for="smoke">Do you smoke: <span><select id="smoke"></select></span></label>
+                    </div>
+                    
+                    <div class="dropdownlist">
+                        <label for="ch2o">Consumption of water daily: <span><select id="ch2o"></select></span></label>
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="scc">Calories consumption monitoring: <span><select id="scc"></select></span></label>
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="faf">Physical activity frequency : <span><select id="faf"></select></span></label>
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="tue">Time using technology devices: <span><select id="tue"></select></span></label>
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="calc">Consumption of alcohol : <span><select id="calc"></select></span></label>
+                    </div>
+
+                    <div class="dropdownlist">
+                        <label for="mtrans">Transportation used: <span><select id="mtrans"></select></span></label>
+                    </div>
+
+                </td>
+            </tr>
+
+
+        </table>
+    </body>
+
+    <script>
+        // schema for adding dict to dropdown values
+        var gender = {{ gender|safe }}
+        for (let key in gender) {
+            i=0;
+            let value = gender[key];
+            //alert( value);
+            $('#gender').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+
+        
+        var fam_hist = {{ fam_history|safe }}
+        for (let key in fam_hist) {
+            i=0;
+            let value = fam_hist[key];
+            //alert( value);
+            $('#fam_hist').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var slider3 = $("#age_range");
+        $("#age").html(slider3.val());
+        slider3.change(function() {
+            $("#age").html(slider3.val());
+        })
+
+        var favc = {{ favc|safe }}
+        for (let key in favc) {
+            i=0;
+            let value = favc[key];
+            //alert( value);
+            $('#favc').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var fcvc = {{ fcvc|safe }}
+        for (let key in fcvc) {
+            i=0;
+            let value = fcvc[key];
+            //alert( value);
+            $('#fcvc').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var ncp = {{ ncp|safe }}
+        for (let key in ncp) {
+            i=0;
+            let value = ncp[key];
+            //alert( value);
+            $('#ncp').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var caec = {{ caec|safe }}
+        for (let key in caec) {
+            i=0;
+            let value = caec[key];
+            //alert( value);
+            $('#caec').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var smoke = {{ smoke|safe }}
+        for (let key in smoke) {
+            i=0;
+            let value = smoke[key];
+            //alert( value);
+            $('#smoke').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+        
+        var ch2o = {{ ch2o|safe }}
+        for (let key in ch2o) {
+            i=0;
+            let value = ch2o[key];
+            //alert( value);
+            $('#ch2o').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+
+        var scc = {{ scc|safe }}
+        for (let key in scc) {
+            i=0;
+            let value = scc[key];
+            //alert( value);
+            $('#scc').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var faf = {{ faf|safe }}
+        for (let key in faf) {
+            i=0;
+            let value = faf[key];
+            //alert( value);
+            $('#faf').append('<option value=' + value + '>' + key  + '</option>');
+            i++;
+            }
+
+        var tue = {{ tue|safe }}
+        for (let key in tue) {
+            i=0;
+            let value = tue[key];
+            //alert( value);
+            $('#tue').append('<option value=' + value + '>' + key  + '</option>');
+            i++;
+            }
+
+        var calc = {{ calc|safe }}
+        for (let key in calc) {
+            i=0;
+            let value = calc[key];
+            //alert( value);
+            $('#calc').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var mtrans = {{ mtrans|safe }}
+        for (let key in mtrans) {
+            i=0;
+            let value = mtrans[key];
+            //alert( value);
+            $('#mtrans').append('<option value=' + value + '>' + key + '</option>');
+            i++;
+            }
+
+        var logger = '';
+
+        // functions for udating predictions
+        function update_dashboard(NObesity_prediction){
+            $('#estimated_NObesity').html(NObesity_prediction);
+            }
+
+        function fetchdata()
+        {
+        // dictionary that stores user inputs
+            $.getJSON({
+                type: "GET",
+                url:'{{ url_for('background_process')}}',
+                data: {
+                    'Gender': $('#gender option:selected').val(),
+                    'Age': $("#age").html(),
+                    'family_history_with_overweight': $('#fam_hist option:selected').val(),
+                    'FAVC': $("#favc option:selected").val(),
+                    'FCVC': $("#fcvc option:selected").val(),
+                    'NCP': $("#ncp option:selected").val(),
+                    'CAEC': $("#caec option:selected").val(),
+                    'SMOKE': $("#smoke option:selected").val(),
+                    'CH2O': $("#ch2o option:selected").val(),
+                    'SCC': $("#scc option:selected").val(),
+                    'FAF': $("#faf option:selected").val(),
+                    'TUE': $("#tue option:selected").val(),
+                    'CALC': $("#calc option:selected").val(), 
+                    'MTRANS': $("#mtrans option:selected").val()
+                },
+                success: function(data){
+                    logger = data.NObesity_prediction
+                    update_dashboard(data.NObesity_prediction);
+                }
+            });
+        }
+
+
+    </script>
+    </html>
